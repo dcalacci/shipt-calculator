@@ -5,38 +5,24 @@ from datetime import datetime, timedelta
 from . import receipts
 from . import shipt_backend
 from google.cloud import storage
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+
+KEY = os.environ['SECRET_KEY']
+s = Serializer(KEY, 60*30) # 60 secs by 30 mins
+
+def write_and_get_signed_path(phone, key, dataframe, uploads_path):
+    """write a file to a path using an itsdangerous timed token
+    """
+    token = s.dumps({'phone': phone, 'key': key}).decode('utf-8')
+    fname = "{}.csv".format(token)
+    dataframe.to_csv(os.path.join(uploads_path, fname))
+    return token
+
+def export_df(df, phone, uploads_path):
+    token = write_and_get_signed_path(phone, 'user_export', df, uploads_path)
+    return token
 
 BUCKET_NAME = os.environ['BUCKET_NAME']
-def upload_to_bucket(blob_name, path_to_file, bucket_name):
-    """ Upload data to a bucket"""
-
-    # Explicitly use service account credentials by specifying the private key
-    # file.
-    storage_client = storage.Client()
-
-    bucket = storage_client.get_bucket(bucket_name)
-    blob = bucket.blob(blob_name)
-    blob.upload_from_filename(path_to_file)
-
-    #returns a public url
-    blob.make_public()
-    return blob.public_url
-
-def upload_to_bucket_signed(blob_name, path_to_file, bucket_name):
-    storage_client = storage.Client()
-    bucket = storage_client.get_bucket(bucket_name)
-    blob = bucket.blob(blob_name)
-    blob.upload_from_filename(path_to_file)
-    return blob.generate_signed_url(expiration=timedelta(hours=2), version='v4')
-
-
-def export_df(df, phone):
-    filename = "{}_{}.csv".format(phone, datetime.now().strftime("%m-%d-%Y"))
-    df.to_csv(os.path.join("/tmp", filename))
-    return upload_to_bucket(blob_name=filename, path_to_file=os.path.join("/tmp",
-        filename), bucket_name=BUCKET_NAME)
-
-
 def upload_image(filename, filepath):
 
     storage_client = storage.Client()

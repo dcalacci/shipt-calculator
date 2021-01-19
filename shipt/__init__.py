@@ -1,10 +1,11 @@
 import requests
 import os.path
-from flask import Flask, request, redirect, session
+from flask import Flask, request, redirect, session, send_from_directory, url_for
 from twilio.twiml.messaging_response import Message, MessagingResponse
 from twilio import twiml, base
 from twilio.rest import Client
 from datetime import datetime
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 import pandas as pd
 import bcrypt
 import gspread
@@ -20,11 +21,27 @@ client = Client(os.environ["TWILIO_SID"], os.environ['TWILIO_TOKEN'])
 
 def create_app():
     # for sessions
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder=os.path.abspath('/tmp'))
     app.config.from_object(__name__)
     app.secret_key = SECRET_KEY
+    uploads_dir = os.path.join(app.root_path, 'uploads')
+    if not os.path.exists(uploads_dir):
+        os.makedirs(uploads_dir)
     print("created app:", app)
     print("Connected to firestore backend...")
+
+    @app.route("/get_signed_file/<token>", methods=['GET'])
+    def get_signed_file(token):
+        """ get signed file using a token request. The serializer resets every N minutes (see export.py),
+        so a request using an old token should not be able to find the same file. 
+
+        Always send from the uploads directory.
+
+        """
+        s = Serializer(os.environ['SECRET_KEY'])
+        phone = s.loads(token)['phone']
+        print("got a phone from the token:", token, phone)
+        return send_from_directory(uploads_dir, '{}.csv'.format(token), as_attachment = True)
 
     # download directory for images
     DOWNLOAD_DIRECTORY = "/tmp"
@@ -353,12 +370,10 @@ image, totaling {} (including tips)".format(
                     phonename = "shipt_all_phones_{}.csv".format(datetime.now().strftime("%m-%d-%Y"))
                     fpath = os.path.join("/tmp", fname)
                     phonepath = os.path.join("/tmp", phonename)
-                    df_all.to_csv(fpath)
-                    df_phones.to_csv(phonepath)
-                    URL_SHOPS = export.upload_to_bucket_signed(fname, fpath,
-                            os.environ['BUCKET_NAME'])
-                    URL_PHONES = export.upload_to_bucket_signed(phonename, phonepath,
-                            os.environ['BUCKET_NAME'])
+                    shops_token = export.write_and_get_signed_path(phone, 'shops', df_all, uploads_dir)
+                    phones_token = export.write_and_get_signed_path(phone, 'phones', df_phones, uploads_dir)
+                    URL_SHOPS = url_for('get_signed_file', token=shops_token, _external=True)
+                    URL_PHONES = url_for('get_signed_file', token=phones_token, _external=True)
                     print("phone URL:", URL_PHONES)
                     resp.message("Authentication succeeded! Export of all data will be available for the next 2 hours. Shops:  {}\n".format(URL_SHOPS))
                     # Send second message
@@ -375,7 +390,8 @@ image, totaling {} (including tips)".format(
 
             elif 'export' in message_body:
                 shop_df = SB.get_phone_shops(phone)
-                url = export.export_df(shop_df, phone)
+                token = export.export_df(shop_df, phone, uploads_dir)
+                url = url_for('get_signed_file', token=token, _external=True)
                 resp.message(
                     "Data exported! You can download it here: {}".format(url))
                 return str(resp)

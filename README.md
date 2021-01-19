@@ -1,4 +1,4 @@
-# Shipt Receipts
+# shipt-calculator
 
 This is an SMS bot to help Shipt shoppers keep track of their pay more easily. Shoppers can text the
 bot screenshots of their pay history, and then export parsed data as a CSV file, compare their pay

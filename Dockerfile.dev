@@ -1,0 +1,26 @@
+FROM python:3.7-slim
+FROM jjanzic/docker-python3-opencv
+
+ENV PYTHONIOENCODING=utf-8
+ENV GOOGLE_APPLICATION_CREDENTIALS=/app/service_account.json
+ENV CONFIG=development
+ENV BUCKET_NAME=shipt-test-images
+ENV FLASK_APP=shipt:create_app
+ENV SECRET_KEY=${SECRET_KEY}
+ENV EXPORT_PASSWORD=${EXPORT_PASSWORD}
+ENV TWILIO_SID=${TWILIO_SID}
+ENV TWILIO_TOKEN=${TWILIO_TOKEN}
+ENV TWILIO_NUMBER="${TWILIO_NUMBER}"
+
+COPY . /app
+WORKDIR /app
+RUN mkdir -p /root/.config/gspread
+RUN mkdir -p /home/.config/gspread
+COPY service_account.json /home/.config/gspread
+COPY service_account.json /root/.config/gspread
+RUN apt update && apt install -y libsm6 libxext6
+RUN apt-get -y install tesseract-ocr
+RUN pip install -r requirements.txt 
+EXPOSE 5000
+ENTRYPOINT ["flask"]
+CMD ["run", "--host=0.0.0.0"]

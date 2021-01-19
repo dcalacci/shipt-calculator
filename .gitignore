@@ -1,0 +1,17 @@
+*.pyc
+._*
+*.csv
+service_account.json
+__pycache__
+.Rproj.user
+.vscode
+.Rhistory
+admin.pw
+export
+*.Rproj
+shipt-receipts.json
+tests/
+analysis/
+.gcloudignore
+
+

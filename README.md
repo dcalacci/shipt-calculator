@@ -22,12 +22,18 @@ This project uses the following external services:
 Once you enable Twilio and Firebase, you need to define the following env variables:
 
 ```
+# service account key needed for running firebase in-container
 GOOGLE_APPLICATION_CREDENTIALS=/app/service_account.json
+# used for generating temporary links
 SECRET_KEY=dev
+# password you give to anyone who should be able to export all the data
 EXPORT_PASSWORD=mysecretpass
+# SID & account token & phone for twilio
 TWILIO_SID=twiliosid
 TWILIO_TOKEN=twiliotoken
 TWILIO_NUMBER=+5555555555
+# need this for production flask deployment
+FLASK_APP=shipt:create_app
 ```
 
 ## Getting things running locally first

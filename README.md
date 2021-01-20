@@ -19,7 +19,8 @@ This project uses the following external services:
 - [Twilio](https://www.twilio.com/) for SMS capability
 - [Firebase](https://firebase.google.com/) to store user data
 
-Once you enable Twilio and Firebase, you need to define the following env variables:
+Once you enable Twilio and Firebase, you need to define the following env variables. You should make
+two files with these vars defined in the root of the repo: `.env` for development, and `.env.prod` for production.
 
 ```
 # service account key needed for running firebase in-container

@@ -36,7 +36,29 @@ TWILIO_NUMBER=+5555555555
 FLASK_APP=shipt:create_app
 ```
 
-## Getting things running locally first
+## Quick set-up
+
+If you already have a twilio account + number, and a firebase account, fill in the env variables and
+[download your google service account key](https://console.cloud.google.com/iam-admin/serviceaccounts), and build + run the docker container in development mode:
+
+```bash
+docker build -t "shipt-calculator-dev" -f Dockerfile.dev .
+docker run -e CONFIG='development' --env-file .env -p 5000:5000 -v $PWD:/app shipt-calculator-dev:latest
+```
+
+Make sure to set your SMS endpoint in twilio to wherever you have the container running:
+
+![twilio setup](screenshots/twilio.png)
+
+Then, you should be able to interact over SMS:
+
+![sms shot](screenshots/img-commands.png)
+
+If you submit a screenshot of the Shipt pay screen, you should see something like the following:
+
+![image_submit](screenshots/img-submit.png)
+
+## Install and Setup
 
 To run the service locally on your development machine, you really just need to get twilio set up.
 This means making an account with a phone number you can text.

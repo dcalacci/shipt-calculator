@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
-# service account and other details are specific to your install
-gcloud builds submit --tag $GCLOUD_PROJECT
-gcloud run deploy --image $GCLOUD_PROJECT --platform managed --service-account $SERVICE_ACCT -memory 2G --cpu 2 --set-env-vars EXPORT_PASSWORD=exportpass
+
+# docker build -t "shipt-calculator"  -f Dockerfile .
+docker run -e CONFIG='production' --env-file .env.prod -p 8080:8080 shipt-calculator:latest

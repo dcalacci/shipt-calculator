@@ -436,7 +436,6 @@ image, totaling {} (including tips)".format(
                     image_url = request.values['MediaUrl{}'.format(idx)]
                     print("Downloading image from:", image_url)
                     f.write(requests.get(image_url).content)
-                    bucket_url = export.upload_image(filename, filepath)
                 try:
                     df = receipts.receipt_to_df(filepath)
                 except Exception as e:
@@ -444,7 +443,7 @@ image, totaling {} (including tips)".format(
                     print(e)
                     df = pd.DataFrame()
                 df["phone"] = phone
-                df['bucket_url'] = bucket_url
+                df['media_url'] = image_url
                 df["from_zip"] = fromZip
                 df_arr.append(df)
 

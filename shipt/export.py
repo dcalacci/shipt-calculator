@@ -4,7 +4,6 @@ import pandas as pd
 from datetime import datetime, timedelta
 from . import receipts
 from . import shipt_backend
-from google.cloud import storage
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 KEY = os.environ['SECRET_KEY']
@@ -21,15 +20,3 @@ def write_and_get_signed_path(phone, key, dataframe, uploads_path):
 def export_df(df, phone, uploads_path):
     token = write_and_get_signed_path(phone, 'user_export', df, uploads_path)
     return token
-
-BUCKET_NAME = os.environ['BUCKET_NAME']
-def upload_image(filename, filepath):
-
-    storage_client = storage.Client()
-
-    bucket = storage_client.get_bucket(BUCKET_NAME)
-    blob = bucket.blob(filename)
-    blob.upload_from_filename(filepath)
-
-    #returns a public url
-    return blob.public_url

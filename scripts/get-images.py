@@ -5,7 +5,7 @@ import pandas as pd
 import os
 
 BUCKET_NAME = os.environ['BUCKET_NAME']
-SB = shipt.shipt_backend.FirestoreBackend(prefix="test_")
+SB = shipt.shipt_backend.FirestoreBackend()
 if __name__ == "__main__":
     # download all images
     storage_client = storage.Client()

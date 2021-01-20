@@ -48,15 +48,15 @@ docker run -e CONFIG='development' --env-file .env -p 5000:5000 -v $PWD:/app shi
 
 Make sure to set your SMS endpoint in twilio to wherever you have the container running:
 
-![twilio setup](screenshots/twilio.png)
+![twilio setup](screenshots/twilio.png | width=300)
 
 Then, you should be able to interact over SMS:
 
-![sms shot](screenshots/img-commands.png)
+![sms shot](screenshots/img-commands.png | width=200)
 
 If you submit a screenshot of the Shipt pay screen, you should see something like the following:
 
-![image_submit](screenshots/img-submit.png)
+![image_submit](screenshots/img-submit.png | width=200)
 
 ## Install and Setup
 

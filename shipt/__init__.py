@@ -12,6 +12,7 @@ import gspread
 from . import receipts
 from . import shipt_backend
 from . import export
+from . import api
 
 SECRET_KEY = os.environ['SECRET_KEY']
 prefix = '' if os.environ['CONFIG'] == 'production' else 'test_'
@@ -575,5 +576,8 @@ image, totaling {} (including tips)".format(
             return send_response(response)
 
         return send_response(response)
+
+    app.register_blueprint(api.bp)
+    print("Registered blueprint.")
 
     return app

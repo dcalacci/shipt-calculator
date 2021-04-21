@@ -10,7 +10,7 @@ admin.pw
 export
 *.Rproj
 shipt-receipts.json
-tests/
+tests/images
 analysis/
 .gcloudignore
 

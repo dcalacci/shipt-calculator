@@ -1,0 +1,36 @@
+name: Shipt Calculator Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - name: "[checkout] Checkout Code"
+      uses: actions/checkout@v2
+    - name: "[system] use jq to validate some json"
+      run: |
+        echo $GOOGLE_SERVICE_ACCOUNT_CREDENTIALS_JSON | jq -c | jq keys
+      env:
+        GOOGLE_SERVICE_ACCOUNT_CREDENTIALS_JSON: "{{secrets.google_service_account_credentials_json}}"
+    - name: "[docker] build the dev docker image"
+      run: |
+        docker build -f Dockerfile.dev -t shipt-receipts-dev:latest .
+    - name: "[tests] run the test suite"
+      run: |
+        echo $GOOGLE_SERVICE_ACCOUNT_CREDENTIALS_JSON > service_account.json
+        env > .env
+        ./run-tests.sh
+      env:
+        TEST_BUCKET_NAME: "shipt-calculator-test-data"
+        GOOGLE_APPLICATION_CREDENTIALS: "/app/service_account.json"
+        # secret env vars
+        GOOGLE_SERVICE_ACCOUNT_CREDENTIALS_JSON: "{{secrets.google_service_account_credentials_json}}"
+        TWILIO_SID: "{{secrets.TWILIO_SID}}"
+        TWILIO_TOKEN: "{{secrets.TWILIO_TOKEN}}"
+        TWILIO_NUMBER: "{{secrets.TWILIO_NUMBER}}"

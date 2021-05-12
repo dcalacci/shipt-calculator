@@ -12,6 +12,10 @@ bucket_name = os.environ['TEST_BUCKET_NAME']
 folder='tests/images'
 delimiter='/'
 
+import os
+if not os.path.exists(folder):
+    os.makedirs(folder)
+
 def retrieve_test_images():
 # Retrieve all blobs with a prefix matching the file.
     bucket=client.get_bucket(bucket_name)

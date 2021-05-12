@@ -23,7 +23,7 @@ jobs:
         docker build -f Dockerfile.dev -t shipt-receipts-dev:latest .
     - name: "[tests] run the test suite"
       run: |
-        echo $GOOGLE_SERVICE_ACCOUNT_CREDENTIALS_JSON_B64 | base64 --decode > service_account.json
+        echo $GOOGLE_SERVICE_ACCOUNT_CREDENTIALS_JSON_B64 | base64 --decode | jq > service_account.json
         env > .env
         ./run-tests.sh
       env:

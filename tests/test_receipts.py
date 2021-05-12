@@ -55,7 +55,7 @@ parsed_data = {"test_receipt_1.jpeg":
                    "order_pay": 14.58,
                    "tip": 0
                }],
-               "receipt_cards.png":
+               "test_receipt_cards.png":
                [{
                    "order_number": "50859325",
                    "order_total": 56.00,
@@ -69,7 +69,7 @@ parsed_data = {"test_receipt_1.jpeg":
                    "tip": 6.48,
                    "total_pay": 16.69}
                 ],
-               "receipt_redacted.jpeg":
+               "test_receipt_redacted.jpeg":
                [{
                    "order_total": 69.83,
                    "tip": 5.0,
@@ -98,7 +98,7 @@ def example_receipts():
 
 
 def test_parses_cards(example_receipts):
-    fname = "receipt_cards.png"
+    fname = "test_receipt_cards.png"
     res = receipt_to_df(os.path.join("tests/images", fname), verbose=True)
     res_dict = res.to_dict(orient='records')
     data = parsed_data[fname]
@@ -108,7 +108,7 @@ def test_parses_cards(example_receipts):
 
 
 def test_parses_redacted_order_numbers(example_receipts):
-    fname = "receipt_redacted.jpeg"
+    fname = "test_receipt_redacted.jpeg"
     res = receipt_to_df(os.path.join("tests/images", fname), verbose=True)
     res_dict = res.to_dict(orient='records')
     data = parsed_data[fname]
@@ -118,7 +118,7 @@ def test_parses_redacted_order_numbers(example_receipts):
 
 
 def generates_order_number_if_redacted(example_receipts):
-    fname = "receipt_redacted.jpeg"
+    fname = "test_receipt_redacted.jpeg"
     res = receipt_to_df(os.path.join("tests/images", fname), verbose=True)
     res_dict = res.to_dict(orient='records')
     data = parsed_data[fname]

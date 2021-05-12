@@ -15,22 +15,22 @@ jobs:
       uses: actions/checkout@v2
     - name: "[system] use jq to validate some json"
       run: |
-        echo $GOOGLE_SERVICE_ACCOUNT_CREDENTIALS_JSON | jq -c | jq keys
+        echo $GOOGLE_SERVICE_ACCOUNT_CREDENTIALS_JSON_B64 | base64 --decode | jq keys
       env:
-        GOOGLE_SERVICE_ACCOUNT_CREDENTIALS_JSON: "{{secrets.google_service_account_credentials_json}}"
+        GOOGLE_SERVICE_ACCOUNT_CREDENTIALS_JSON_B64: "${{secrets.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS_JSON_B64}}"
     - name: "[docker] build the dev docker image"
       run: |
         docker build -f Dockerfile.dev -t shipt-receipts-dev:latest .
     - name: "[tests] run the test suite"
       run: |
-        echo $GOOGLE_SERVICE_ACCOUNT_CREDENTIALS_JSON > service_account.json
+        echo $GOOGLE_SERVICE_ACCOUNT_CREDENTIALS_JSON_B64 | base64 --decode > service_account.json
         env > .env
         ./run-tests.sh
       env:
         TEST_BUCKET_NAME: "shipt-calculator-test-data"
         GOOGLE_APPLICATION_CREDENTIALS: "/app/service_account.json"
         # secret env vars
-        GOOGLE_SERVICE_ACCOUNT_CREDENTIALS_JSON: "{{secrets.google_service_account_credentials_json}}"
-        TWILIO_SID: "{{secrets.TWILIO_SID}}"
-        TWILIO_TOKEN: "{{secrets.TWILIO_TOKEN}}"
-        TWILIO_NUMBER: "{{secrets.TWILIO_NUMBER}}"
+        GOOGLE_SERVICE_ACCOUNT_CREDENTIALS_JSON_B64: "${{secrets.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS_JSON_B64}}"
+        TWILIO_SID: "${{secrets.TWILIO_SID}}"
+        TWILIO_TOKEN: "${{secrets.TWILIO_TOKEN}}"
+        TWILIO_NUMBER: "${{secrets.TWILIO_NUMBER}}"

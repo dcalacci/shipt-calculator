@@ -142,7 +142,10 @@ def test_export(client):
     print(message.text)
     assert 'exported!' in message.text.lower()
     url = message.text.split("here:")[1].strip()
-    r = requests.get(url)
+
+
+    r = client.get(url, follow_redirects=True)
+    # r = requests.get(url)
     print("request response:", r)
     #retrieving data from the URL using get method
     with open("/tmp/export.csv", 'wb') as f:

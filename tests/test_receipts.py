@@ -17,6 +17,7 @@ if not os.path.exists(folder):
     os.makedirs(folder)
 
 def retrieve_test_images():
+    """retrieve all blobs from env['TEST_BUCKET_NAME'] with a test_ prefix, saving to local volume"""
 # Retrieve all blobs with a prefix matching the file.
     bucket=client.get_bucket(bucket_name)
     # List blobs iterate in folder 
@@ -223,24 +224,3 @@ def test_receipt_cutoff_ordernumber(example_receipts):
     assert res_dict[1]["order_number"] != ''
     # make sure we get all shops in the long screenshot
     assert len(res_dict) == 7
-
-# # Your Account Sid and Auth Token from twilio.com/console
-# # DANGER! This is insecure. See http://twil.io/secure
-# account_sid = 'ACd0854b269b1df720ede38d950ce1d081'
-# auth_token = 'de596743dd4a51c42630589571d5bae0'
-# client = Client(account_sid, auth_token)
-
-# incoming_phone_number = client.incoming_phone_numbers \
-#     .create(
-#          phone_number='+15550005555',
-#          voice_url='http://demo.twilio.com/docs/voice.xml'
-#      )
-
-# print(incoming_phone_number.sid)
-
-
-# message = client.messages.create(
-#                               from_='+15005550006',
-#                               body='Do. Or do not. There is no try.',
-#                               to='+14108675310'
-#                           )

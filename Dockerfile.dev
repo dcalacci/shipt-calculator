@@ -4,18 +4,31 @@
 # there are no wheels for pystan in python 3.8 which
 # causes dreadfully long build times
 # it is not advised to use `latest` at this time.
+
+# ---- compile image -----------------------------------------------
 FROM python:3.7-slim
 FROM jjanzic/docker-python3-opencv
-#FROM jjanzic/docker-python3-opencv:opencv-4.0.1
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
+  build-essential \
+  gcc \
+  libsm6 \
+  libxext6 \
+  tesseract-ocr
 
-WORKDIR /app
+# RUN python -m venv /opt/venv
+# ENV PATH="/opt/venv/bin:$PATH"
+
+COPY requirements.txt .
+RUN pip install --upgrade pip && pip install --prefer-binary -r requirements.txt
+
+# FROM base AS build-image
+# FROM jjanzic/docker-python3-opencv
+# COPY --from=compile-image /opt/venv /opt/venv
+# ENV PATH="/opt/venv/bin:$PATH"
+
 ENV PYTHONIOENCODING=utf-8
-RUN apt clean && apt update && apt install -y libsm6 libxext6
-RUN apt-get -y install tesseract-ocr
-
-RUN pip install --upgrade pip
-ADD ./requirements.txt /app/requirements.txt
-RUN pip install -r requirements.txt
+WORKDIR /app
 
 COPY . /app
 EXPOSE 5000

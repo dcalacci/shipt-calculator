@@ -4,5 +4,5 @@ docker run -e CONFIG='development' \
            --env-file .env         \
            --entrypoint "python"   \
            -p 5002:5000                           \
-           -v $PWD:/app shipt-receipts-dev:latest \
+           -v $PWD:/app shipt-calculator-dev:latest \
            -m pytest

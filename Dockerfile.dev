@@ -4,8 +4,10 @@
 # there are no wheels for pystan in python 3.8 which
 # causes dreadfully long build times
 # it is not advised to use `latest` at this time.
-# FROM python:3.7-slim
-FROM jjanzic/docker-python3-opencv:opencv-4.0.1
+FROM python:3.7-slim
+FROM jjanzic/docker-python3-opencv
+#FROM jjanzic/docker-python3-opencv:opencv-4.0.1
+
 
 ENV PYTHONIOENCODING=utf-8
 COPY . /app

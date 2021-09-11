@@ -146,9 +146,9 @@ def test_export(client):
 
     r = client.get(url, follow_redirects=True)
     # r = requests.get(url)
-    print("request response:", r)
+    print("request response:", r.data)
     #retrieving data from the URL using get method
     with open("/tmp/export.csv", 'wb') as f:
-        f.write(r.content) 
+        f.write(r.data) 
     df = pd.read_csv('/tmp/export.csv')
     assert len(df) == SB.n_records(test_number)

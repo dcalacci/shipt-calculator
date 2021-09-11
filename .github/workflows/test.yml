@@ -20,7 +20,7 @@ jobs:
         GOOGLE_SERVICE_ACCOUNT_CREDENTIALS_JSON_B64: "${{secrets.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS_JSON_B64}}"
     - name: "[docker] build the dev docker image"
       run: |
-        docker build -f Dockerfile.dev -t shipt-receipts-dev:latest .
+        docker build -f Dockerfile.dev -t shipt-calculator-dev:latest .
     - name: "[tests] run the test suite"
       run: |
         echo $GOOGLE_SERVICE_ACCOUNT_CREDENTIALS_JSON_B64 | base64 --decode | jq > service_account.json

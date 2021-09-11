@@ -8,14 +8,16 @@ FROM python:3.7-slim
 FROM jjanzic/docker-python3-opencv
 #FROM jjanzic/docker-python3-opencv:opencv-4.0.1
 
-
-ENV PYTHONIOENCODING=utf-8
-COPY . /app
 WORKDIR /app
-RUN apt update && apt install -y libsm6 libxext6
+ENV PYTHONIOENCODING=utf-8
+RUN apt clean && apt update && apt install -y libsm6 libxext6
 RUN apt-get -y install tesseract-ocr
+
 RUN pip install --upgrade pip
+ADD ./requirements.txt /app/requirements.txt
 RUN pip install -r requirements.txt
+
+COPY . /app
 EXPOSE 5000
 ENTRYPOINT ["flask"]
 CMD ["run", "--host=0.0.0.0"]

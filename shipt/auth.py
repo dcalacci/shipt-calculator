@@ -58,7 +58,7 @@ def decode_jwt(token):
 # user uses this token for all subsequent API requests.
 
 
-@bp.route("/otp", methods=["GET"])
+@bp.route("/otp", methods=["POST"])
 def auth_phone():
     """creates (and sends, through twilio) an OTP code for a phone"""
     phone = request.form["phone"]

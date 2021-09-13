@@ -142,10 +142,13 @@ def test_export(client):
     print(message.text)
     assert 'exported!' in message.text.lower()
     url = message.text.split("here:")[1].strip()
-    r = requests.get(url)
-    print("request response:", r)
+
+
+    r = client.get(url, follow_redirects=True)
+    # r = requests.get(url)
+    print("request response:", r.data)
     #retrieving data from the URL using get method
     with open("/tmp/export.csv", 'wb') as f:
-        f.write(r.content) 
+        f.write(r.data) 
     df = pd.read_csv('/tmp/export.csv')
     assert len(df) == SB.n_records(test_number)

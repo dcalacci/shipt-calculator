@@ -12,7 +12,12 @@ bucket_name = os.environ['TEST_BUCKET_NAME']
 folder='tests/images'
 delimiter='/'
 
+import os
+if not os.path.exists(folder):
+    os.makedirs(folder)
+
 def retrieve_test_images():
+    """retrieve all blobs from env['TEST_BUCKET_NAME'] with a test_ prefix, saving to local volume"""
 # Retrieve all blobs with a prefix matching the file.
     bucket=client.get_bucket(bucket_name)
     # List blobs iterate in folder 
@@ -51,7 +56,7 @@ parsed_data = {"test_receipt_1.jpeg":
                    "order_pay": 14.58,
                    "tip": 0
                }],
-               "receipt_cards.png":
+               "test_receipt_cards.png":
                [{
                    "order_number": "50859325",
                    "order_total": 56.00,
@@ -65,7 +70,7 @@ parsed_data = {"test_receipt_1.jpeg":
                    "tip": 6.48,
                    "total_pay": 16.69}
                 ],
-               "receipt_redacted.jpeg":
+               "test_receipt_redacted.jpeg":
                [{
                    "order_total": 69.83,
                    "tip": 5.0,
@@ -94,7 +99,7 @@ def example_receipts():
 
 
 def test_parses_cards(example_receipts):
-    fname = "receipt_cards.png"
+    fname = "test_receipt_cards.png"
     res = receipt_to_df(os.path.join("tests/images", fname), verbose=True)
     res_dict = res.to_dict(orient='records')
     data = parsed_data[fname]
@@ -104,7 +109,7 @@ def test_parses_cards(example_receipts):
 
 
 def test_parses_redacted_order_numbers(example_receipts):
-    fname = "receipt_redacted.jpeg"
+    fname = "test_receipt_redacted.jpeg"
     res = receipt_to_df(os.path.join("tests/images", fname), verbose=True)
     res_dict = res.to_dict(orient='records')
     data = parsed_data[fname]
@@ -114,7 +119,7 @@ def test_parses_redacted_order_numbers(example_receipts):
 
 
 def generates_order_number_if_redacted(example_receipts):
-    fname = "receipt_redacted.jpeg"
+    fname = "test_receipt_redacted.jpeg"
     res = receipt_to_df(os.path.join("tests/images", fname), verbose=True)
     res_dict = res.to_dict(orient='records')
     data = parsed_data[fname]
@@ -219,24 +224,3 @@ def test_receipt_cutoff_ordernumber(example_receipts):
     assert res_dict[1]["order_number"] != ''
     # make sure we get all shops in the long screenshot
     assert len(res_dict) == 7
-
-# # Your Account Sid and Auth Token from twilio.com/console
-# # DANGER! This is insecure. See http://twil.io/secure
-# account_sid = 'ACd0854b269b1df720ede38d950ce1d081'
-# auth_token = 'de596743dd4a51c42630589571d5bae0'
-# client = Client(account_sid, auth_token)
-
-# incoming_phone_number = client.incoming_phone_numbers \
-#     .create(
-#          phone_number='+15550005555',
-#          voice_url='http://demo.twilio.com/docs/voice.xml'
-#      )
-
-# print(incoming_phone_number.sid)
-
-
-# message = client.messages.create(
-#                               from_='+15005550006',
-#                               body='Do. Or do not. There is no try.',
-#                               to='+14108675310'
-#                           )

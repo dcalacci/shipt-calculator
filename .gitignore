@@ -14,6 +14,9 @@ tests/images
 analysis/
 .gcloudignore
 
+.env
+.env.prod
+
 
 # Created by https://www.toptal.com/developers/gitignore/api/osx,vim,python
 # Edit at https://www.toptal.com/developers/gitignore?templates=osx,vim,python

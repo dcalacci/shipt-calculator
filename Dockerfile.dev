@@ -1,13 +1,36 @@
+# vi: syntax=Dockerfile
+
+# pinned to this version so we can use python3.7
+# there are no wheels for pystan in python 3.8 which
+# causes dreadfully long build times
+# it is not advised to use `latest` at this time.
+
+# ---- compile image -----------------------------------------------
 FROM python:3.7-slim
 FROM jjanzic/docker-python3-opencv
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
+  build-essential \
+  gcc \
+  libsm6 \
+  libxext6 \
+  tesseract-ocr
+
+# RUN python -m venv /opt/venv
+# ENV PATH="/opt/venv/bin:$PATH"
+
+COPY requirements.txt .
+RUN pip install --upgrade pip && pip install --prefer-binary -r requirements.txt
+
+# FROM base AS build-image
+# FROM jjanzic/docker-python3-opencv
+# COPY --from=compile-image /opt/venv /opt/venv
+# ENV PATH="/opt/venv/bin:$PATH"
 
 ENV PYTHONIOENCODING=utf-8
-COPY . /app
 WORKDIR /app
-RUN apt update && apt install -y libsm6 libxext6
-RUN apt-get -y install tesseract-ocr
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt 
+
+COPY . /app
 EXPOSE 5000
 ENTRYPOINT ["flask"]
 CMD ["run", "--host=0.0.0.0"]
